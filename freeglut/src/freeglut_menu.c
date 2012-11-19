@@ -85,9 +85,7 @@ static float menu_pen_hback [4] = {1.0f,  1.0f,  1.0f,  1.0f};
 #endif
 
 extern void fghGetCursorPos(SFG_XYUse *mouse_pos);
-#if TARGET_HOST_MS_WINDOWS
-extern RECT fghGetClientArea( const SFG_Window *window, BOOL wantPosOutside );
-#endif
+
 
 /* -- PRIVATE FUNCTIONS ---------------------------------------------------- */
 
@@ -834,11 +832,12 @@ void fgPlatformCheckMenuDeactivate()
             else
             {
                 /* Check if focus lost because non-client area of
-                * window was pressed (pressing on client area is
-                * handled in fgCheckActiveMenu)
-                */
+                 * window was pressed (pressing on client area is
+                 * handled in fgCheckActiveMenu)
+                 */
                 POINT mouse_pos;
-                RECT clientArea = fghGetClientArea(menu->ParentWindow, GL_FALSE);
+                RECT clientArea;
+                fghGetClientArea(&clientArea,menu->ParentWindow, GL_FALSE);
                 GetCursorPos(&mouse_pos);
                 if ( !PtInRect( &clientArea, mouse_pos ) )
                     fgDeactivateMenu(menu->ParentWindow);

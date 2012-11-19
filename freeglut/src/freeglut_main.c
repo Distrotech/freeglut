@@ -127,6 +127,16 @@ static void fghReshapeWindow ( SFG_Window *window, int width, int height )
          * For windowed mode, get the current position of the
          * window and resize taking the size of the frame
          * decorations into account.
+         *
+         * Note on maximizing behavior of Windows: the resize borders are off
+         * the screen such that the client area extends all the way from the
+         * leftmost corner to the rightmost corner to maximize screen real
+         * estate. A caption is still shown however to allow interaction with
+         * the window controls. This is default behavior of Windows that
+         * FreeGLUT sticks with. To alter, one would have to check if
+         * WS_MAXIMIZE style is set when a resize event is triggered, and
+         * then manually correct the windowRect to put the borders back on
+         * screen.
          */
 
         /* "GetWindowRect" returns the pixel coordinates of the outside of the window */
@@ -138,7 +148,7 @@ static void fghReshapeWindow ( SFG_Window *window, int width, int height )
 
         if (window->Parent == NULL)
             /* get the window rect from this to feed to SetWindowPos, correct for window decorations */
-            fghComputeWindowRectFromClientArea_QueryWindow(window,&windowRect,TRUE);
+            fghComputeWindowRectFromClientArea_QueryWindow(&windowRect,window,TRUE);
         else
         {
             /* correct rect for position client area of parent window
@@ -148,11 +158,8 @@ static void fghReshapeWindow ( SFG_Window *window, int width, int height )
              * for them.
              */
             RECT parentRect;
-            parentRect = fghGetClientArea( window->Parent, FALSE );
-            windowRect.left   -= parentRect.left;
-            windowRect.right  -= parentRect.left;
-            windowRect.top    -= parentRect.top;
-            windowRect.bottom -= parentRect.top;
+            fghGetClientArea( &parentRect, window->Parent, FALSE );
+            OffsetRect(&windowRect,-parentRect.left,-parentRect.top);
         }
         
         /* Do the actual resizing */
