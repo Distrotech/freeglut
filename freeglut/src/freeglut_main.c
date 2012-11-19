@@ -1656,7 +1656,8 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
         GetCursorPos( &mouse_pos );
         ScreenToClient( window->Window.Handle, &mouse_pos );
         hwnd = ChildWindowFromPoint(window->Window.Handle, mouse_pos);
-        window = fgWindowByHandle(hwnd);
+        if (hwnd)   /* can be NULL if mouse outside parent by the time we get here */
+            window = fgWindowByHandle(hwnd);
     }
 
     if ( window )
