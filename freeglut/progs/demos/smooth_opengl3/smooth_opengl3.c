@@ -200,8 +200,9 @@ GLuint vertexArrayName;
 
 void initBuffer(void)
 {
-   /* Need to setup a vertex array as otherwise invalid operation errors can    * occur when accessing vertex buffer (OpenGL 3.3 has no default zero name
-    * vertex array
+   /* Need to setup a vertex array as otherwise invalid operation errors can
+    * occur when accessing vertex buffer (OpenGL 3.3 has no default zero named
+    * vertex array) 
     */
    gl_GenVertexArrays(1, &vertexArrayName);
    gl_BindVertexArray(vertexArrayName);
