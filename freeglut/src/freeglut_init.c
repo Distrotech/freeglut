@@ -1117,6 +1117,7 @@ void FGAPIENTRY glutInitDisplayString( const char* displayMode )
         case 35 :  /* "borderless":  windows should not have borders */
 #if TARGET_HOST_POSIX_X11
 #endif
+            glut_state_flag |= GLUT_BORDERLESS;
             break ;
 
         case 36 :  /* "aux":  some number of aux buffers */
