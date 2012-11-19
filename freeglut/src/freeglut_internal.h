@@ -34,8 +34,8 @@
 
 /* XXX Update these for each release! */
 #define  VERSION_MAJOR 2
-#define  VERSION_MINOR 7
-#define  VERSION_PATCH 0
+#define  VERSION_MINOR 8
+#define  VERSION_PATCH 1
 
 /* Freeglut is intended to function under all Unix/X11 and Win32 platforms. */
 /* XXX: Don't all MS-Windows compilers (except Cygwin) have _WIN32 defined?
