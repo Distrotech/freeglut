@@ -537,9 +537,9 @@ static void fghActivateMenu( SFG_Window* window, int button )
     SFG_Menu* menu = window->Menu[ button ];
     SFG_Window* current_window = fgStructure.CurrentWindow;
 
-    /* If the menu is already active in another window, deactivate it there */
+    /* If the menu is already active in another window, deactivate it (and any submenus) there */
     if ( menu->ParentWindow )
-      menu->ParentWindow->ActiveMenu = NULL ;
+      fgDeactivateMenu(menu->ParentWindow);
 
     /* Mark the menu as active, so that it gets displayed: */
     window->ActiveMenu = menu;
@@ -645,9 +645,8 @@ GLboolean fgCheckActiveMenu ( SFG_Window *window, int button, GLboolean pressed,
             /*
              * Outside the menu, deactivate if it's a downclick
              *
-             * XXX This isn't enough.  A downclick outside of
-             * XXX the interior of our freeglut windows should also
-             * XXX deactivate the menu.  This is more complicated.
+             * A downclick outside of the interior of our freeglut windows
+             * is dealt with in the WM_KILLFOCUS handler of fgPlatformWindowProc
              */
             fgDeactivateMenu( window->ActiveMenu->ParentWindow );
 
@@ -684,12 +683,13 @@ GLboolean fgCheckActiveMenu ( SFG_Window *window, int button, GLboolean pressed,
 void fgDeactivateMenu( SFG_Window *window )
 {
     SFG_Window *parent_window = NULL;
-
-    /* Check if there is an active menu attached to this window... */
-    SFG_Menu* menu = window->ActiveMenu;
+    SFG_Menu* menu;
     SFG_MenuEntry *menuEntry;
 
     /* Did we find an active window? */
+    freeglut_return_if_fail( window );
+    /* Check if there is an active menu attached to this window... */
+    menu = window->ActiveMenu;
     freeglut_return_if_fail( menu );
 
     parent_window = menu->ParentWindow;
@@ -714,7 +714,7 @@ void fgDeactivateMenu( SFG_Window *window )
     {
         menuEntry->IsActive = GL_FALSE;
 
-        /* Is that an active submenu by any case? */
+        /* Is that an active submenu by any chance? */
         if( menuEntry->SubMenu )
             fghDeactivateSubMenu( menuEntry );
     }
