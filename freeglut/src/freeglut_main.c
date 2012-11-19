@@ -1847,6 +1847,8 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
 /*        printf("WM_SETFOCUS: %p\n", window ); */
         lRet = DefWindowProc( hWnd, uMsg, wParam, lParam );
         INVOKE_WCB( *window, Entry, ( GLUT_ENTERED ) );
+
+        UpdateWindow ( hWnd );
         break;
 
     case WM_KILLFOCUS:
