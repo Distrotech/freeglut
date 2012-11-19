@@ -1633,6 +1633,7 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
     SFG_Window* window;
     PAINTSTRUCT ps;
     LRESULT lRet = 1;
+    GLboolean gotChild = GL_FALSE;
 
     FREEGLUT_INTERNAL_ERROR_EXIT_IF_NOT_INITIALISED ( "Event Handler" ) ;
 
@@ -1657,7 +1658,11 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
         ScreenToClient( window->Window.Handle, &mouse_pos );
         hwnd = ChildWindowFromPoint(window->Window.Handle, mouse_pos);
         if (hwnd)   /* can be NULL if mouse outside parent by the time we get here */
+        {
             window = fgWindowByHandle(hwnd);
+            if (window->Parent)
+                gotChild = GL_TRUE;
+        }
     }
 
     if ( window )
@@ -1891,10 +1896,16 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
 
     case WM_SETFOCUS:
 /*        printf("WM_SETFOCUS: %p\n", window ); */
+        if (gotChild)
+            /* If child should have focus instead, set it here. */
+            SetFocus(window->Window.Handle);
+
         lRet = DefWindowProc( hWnd, uMsg, wParam, lParam );
         INVOKE_WCB( *window, Entry, ( GLUT_ENTERED ) );
 
         UpdateWindow ( hWnd );
+        if (gotChild)
+            UpdateWindow ( window->Window.Handle );
         break;
 
     case WM_KILLFOCUS:
