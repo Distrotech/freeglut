@@ -175,16 +175,9 @@ typedef HGLRC (WINAPI * PFNWGLCREATECONTEXTATTRIBSARBPROC) (HDC hDC, HGLRC hShar
 
 /* -- PRIVATE FUNCTIONS ---------------------------------------------------- */
 
-static int fghIsLegacyContextVersionRequested( void )
-{
-  return fgState.MajorVersion < 2 || (fgState.MajorVersion == 2 && fgState.MinorVersion <= 1);
-}
-
 static int fghIsLegacyContextRequested( void )
 {
-  return fghIsLegacyContextVersionRequested() &&
-         fgState.ContextFlags == 0 &&
-         fgState.ContextProfile == 0;
+  return fgState.MajorVersion < 2 || (fgState.MajorVersion == 2 && fgState.MinorVersion <= 1);
 }
 
 static int fghNumberOfAuxBuffersRequested( void )
@@ -401,10 +394,8 @@ GLXFBConfig* fgChooseFBConfig( int *numcfgs )
 static void fghFillContextAttributes( int *attributes ) {
   int where = 0, contextFlags, contextProfile;
 
-  if ( !fghIsLegacyContextVersionRequested() ) {
-    ATTRIB_VAL( GLX_CONTEXT_MAJOR_VERSION_ARB, fgState.MajorVersion );
-    ATTRIB_VAL( GLX_CONTEXT_MINOR_VERSION_ARB, fgState.MinorVersion );
-  }
+  ATTRIB_VAL( GLX_CONTEXT_MAJOR_VERSION_ARB, fgState.MajorVersion );
+  ATTRIB_VAL( GLX_CONTEXT_MINOR_VERSION_ARB, fgState.MinorVersion );
 
   contextFlags =
     fghMapBit( fgState.ContextFlags, GLUT_DEBUG, GLX_CONTEXT_DEBUG_BIT_ARB ) |
@@ -573,10 +564,8 @@ static wchar_t* fghWstrFromStr(const char* str)
 static void fghFillContextAttributes( int *attributes ) {
   int where = 0, contextFlags, contextProfile;
 
-  if ( !fghIsLegacyContextVersionRequested() ) {
-    ATTRIB_VAL( WGL_CONTEXT_MAJOR_VERSION_ARB, fgState.MajorVersion );
-    ATTRIB_VAL( WGL_CONTEXT_MINOR_VERSION_ARB, fgState.MinorVersion );
-  }
+  ATTRIB_VAL( WGL_CONTEXT_MAJOR_VERSION_ARB, fgState.MajorVersion );
+  ATTRIB_VAL( WGL_CONTEXT_MINOR_VERSION_ARB, fgState.MinorVersion );
 
   contextFlags =
     fghMapBit( fgState.ContextFlags, GLUT_DEBUG, WGL_CONTEXT_DEBUG_BIT_ARB ) |
