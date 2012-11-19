@@ -1644,6 +1644,21 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
     /* printf ( "Window %3d message <%04x> %12d %12d\n", window?window->ID:0,
              uMsg, wParam, lParam ); */
 
+    /* events only sent to main window. Check if the current window that the mouse
+       is over is a child window and if so, make sure we call the callback on that
+       child instead.
+    */
+    if (window && window->Children.First)
+    {
+        POINT mouse_pos;
+        SFG_WindowHandleType hwnd;
+        
+        GetCursorPos( &mouse_pos );
+        ScreenToClient( window->Window.Handle, &mouse_pos );
+        hwnd = ChildWindowFromPoint(window->Window.Handle, mouse_pos);
+        window = fgWindowByHandle(hwnd);
+    }
+
     if ( window )
     {
       fgState.Modifiers = fghGetWin32Modifiers( );
@@ -1957,7 +1972,6 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
             fgUpdateMenuHighlight( window->ActiveMenu );
             break;
         }
-        SetFocus(window->Window.Handle);
 
         fgState.Modifiers = fghGetWin32Modifiers( );
 
