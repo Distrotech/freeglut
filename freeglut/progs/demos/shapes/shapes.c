@@ -77,7 +77,6 @@ static GLboolean show_info = GL_TRUE;
 static float ar;
 static GLboolean persProject = GL_TRUE;
 static GLboolean animateXRot = GL_FALSE;
-static GLboolean visNormals  = GL_FALSE;
 
 /*
  * Enum to tell drawSizeInfo what to draw for each object
@@ -310,7 +309,6 @@ static void drawInfo()
         shapesPrintf (row++, 1, "2D rotation (r)");
     else
         shapesPrintf (row++, 1, "1D rotation (r)");
-    shapesPrintf (row++, 1, "visualizing normals: %i (n)",visNormals);
 }
 
 /* GLUT callback Handlers */
