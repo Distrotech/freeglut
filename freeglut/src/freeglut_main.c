@@ -1641,6 +1641,8 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
 
     if ( window )
     {
+      fgState.Modifiers = fghGetWin32Modifiers( );
+
       /* Checking for CTRL, ALT, and SHIFT key positions:  Key Down! */
       if ( !lControl && GetAsyncKeyState ( VK_LCONTROL ) )
       {
@@ -1750,6 +1752,8 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
 
           rAlt = 0;
       }
+
+      fgState.Modifiers = INVALID_MODIFIERS;
     }
 
     switch( uMsg )
@@ -2189,12 +2193,12 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
             KEY( VK_RIGHT,  GLUT_KEY_RIGHT     );
             KEY( VK_DOWN,   GLUT_KEY_DOWN      );
             KEY( VK_INSERT, GLUT_KEY_INSERT    );
-            KEY( VK_LCONTROL, GLUT_KEY_CTRL_L  );
-            KEY( VK_RCONTROL, GLUT_KEY_CTRL_R  );
-            KEY( VK_LSHIFT, GLUT_KEY_SHIFT_L   );
-            KEY( VK_RSHIFT, GLUT_KEY_SHIFT_R   );
-            KEY( VK_LMENU,  GLUT_KEY_ALT_L     );
-            KEY( VK_RMENU,  GLUT_KEY_ALT_R     );
+
+        case VK_LCONTROL:  case VK_RCONTROL:  case VK_CONTROL:
+        case VK_LSHIFT:    case VK_RSHIFT:    case VK_SHIFT:
+        case VK_LMENU:     case VK_RMENU:     case VK_MENU:
+            /* These keypresses and releases are handled earlier in the function */
+            break;
 
         case VK_DELETE:
             /* The delete key should be treated as an ASCII keypress: */
@@ -2281,12 +2285,12 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
             KEY( VK_RIGHT,  GLUT_KEY_RIGHT     );
             KEY( VK_DOWN,   GLUT_KEY_DOWN      );
             KEY( VK_INSERT, GLUT_KEY_INSERT    );
-            KEY( VK_LCONTROL, GLUT_KEY_CTRL_L  );
-            KEY( VK_RCONTROL, GLUT_KEY_CTRL_R  );
-            KEY( VK_LSHIFT, GLUT_KEY_SHIFT_L   );
-            KEY( VK_RSHIFT, GLUT_KEY_SHIFT_R   );
-            KEY( VK_LMENU,  GLUT_KEY_ALT_L     );
-            KEY( VK_RMENU,  GLUT_KEY_ALT_R     );
+
+          case VK_LCONTROL:  case VK_RCONTROL:  case VK_CONTROL:
+          case VK_LSHIFT:    case VK_RSHIFT:    case VK_SHIFT:
+          case VK_LMENU:     case VK_RMENU:     case VK_MENU:
+            /* These keypresses and releases are handled earlier in the function */
+            break;
 
           case VK_DELETE:
               /* The delete key should be treated as an ASCII keypress: */
