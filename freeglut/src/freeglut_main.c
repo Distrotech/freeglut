@@ -70,6 +70,14 @@ struct GXKeyList gxKeyList;
 #    define MIN(a,b) (((a)<(b)) ? (a) : (b))
 #endif
 
+#if TARGET_HOST_POSIX_X11
+    /* used in the event handling code to match and discard stale mouse motion events */
+    static Bool match_motion(Display *dpy, XEvent *xev, XPointer arg)
+    {
+        return xev->type == MotionNotify;
+    }
+#endif
+
 #ifdef WM_TOUCH
     typedef BOOL (WINAPI *pGetTouchInputInfo)(HTOUCHINPUT,UINT,PTOUCHINPUT,int);
     typedef BOOL (WINAPI *pCloseTouchInputHandle)(HTOUCHINPUT);
@@ -1172,6 +1180,13 @@ void FGAPIENTRY glutMainLoopEvent( void )
 
         case MotionNotify:
         {
+            /* if GLUT_SKIP_STALE_MOTION_EVENTS is true, then discard all but
+             * the last motion event from the queue
+             */
+            if(fgState.SkipStaleMotion) {
+                while(XCheckIfEvent(fgDisplay.pDisplay.Display, &event, match_motion, 0));
+            }
+
             GETWINDOW( xmotion );
             GETMOUSE( xmotion );
 

@@ -89,6 +89,7 @@ SFG_State fgState = { { -1, -1, GL_FALSE },  /* Position */
                       0,                      /* MouseWheelTicks */
                       1,                      /* AuxiliaryBufferNumber */
                       4,                      /* SampleNumber */
+                      GL_FALSE,               /* SkipStaleMotion */
                       1,                      /* MajorVersion */
                       0,                      /* MinorVersion */
                       0,                      /* ContextFlags */
