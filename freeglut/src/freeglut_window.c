@@ -623,6 +623,9 @@ void fgNewWGLCreateContext( SFG_Window* window )
 
     if ( !fghIsExtensionSupported( window->Window.Device, "WGL_ARB_create_context" ) )
     {
+        /* wglCreateContextAttribsARB not found, yet the user has requested the new context creation */
+        fgWarning( "OpenGL >2.1 context requested but wglCreateContextAttribsARB is not available! Falling back to legacy context creation" );
+        /* Legacy context already created at this point in WM_CREATE path of fgPlatformWindowProc, just return */
         return;
     }
 
@@ -632,7 +635,10 @@ void fgNewWGLCreateContext( SFG_Window* window )
     wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC) wglGetProcAddress( "wglCreateContextAttribsARB" );
     if ( wglCreateContextAttribsARB == NULL )
     {
-        fgError( "wglCreateContextAttribsARB not found" );
+        /* wglCreateContextAttribsARB not found, yet the user has requested the new context creation */
+        fgWarning( "OpenGL >2.1 context requested but wglCreateContextAttribsARB is not available! Falling back to legacy context creation" );
+        /* Legacy context already created at this point in WM_CREATE path of fgPlatformWindowProc, just return */
+        return;
     }
 
     context = wglCreateContextAttribsARB( window->Window.Device, 0, attributes );
