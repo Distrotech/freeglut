@@ -2079,8 +2079,7 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
     }
     break;
 
-    case 0x020a:
-        /* Should be WM_MOUSEWHEEL but my compiler doesn't recognize it */
+    case WM_MOUSEWHEEL:
     {
         int wheel_number = LOWORD( wParam );
         short ticks = ( short )HIWORD( wParam );
@@ -2089,7 +2088,7 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
         /*
          * XXX Should use WHEEL_DELTA instead of 120
          */
-		if ( abs ( fgState.MouseWheelTicks ) > 120 )
+		if ( abs ( fgState.MouseWheelTicks ) >= 120 )
 		{
 			int direction = ( fgState.MouseWheelTicks > 0 ) ? 1 : -1;
 
@@ -2103,7 +2102,7 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
             /*
              * XXX Should use WHEEL_DELTA instead of 120
              */
-            while( abs ( fgState.MouseWheelTicks ) > 120 )
+            while( abs ( fgState.MouseWheelTicks ) >= 120 )
 			{
                 if( FETCH_WCB( *window, MouseWheel ) )
                     INVOKE_WCB( *window, MouseWheel,
