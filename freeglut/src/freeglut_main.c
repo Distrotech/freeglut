@@ -1200,7 +1200,7 @@ void FGAPIENTRY glutMainLoopEvent( void )
              * the last motion event from the queue
              */
             if(fgState.SkipStaleMotion) {
-                while(XCheckIfEvent(fgDisplay.pDisplay.Display, &event, match_motion, 0));
+                while(XCheckIfEvent(fgDisplay.Display, &event, match_motion, 0));
             }
 
             GETWINDOW( xmotion );

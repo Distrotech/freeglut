@@ -1169,13 +1169,13 @@ void fgOpenWindow( SFG_Window* window, const char* title,
      * even with no window manager.
      */
     fakeEvent.type = ConfigureNotify;
-    fakeEvent.display = fgDisplay.pDisplay.Display;
+    fakeEvent.display = fgDisplay.Display;
     fakeEvent.window = window->Window.Handle;
     fakeEvent.x = x;
     fakeEvent.y = y;
     fakeEvent.width = w;
     fakeEvent.height = h;
-    XPutBackEvent(fgDisplay.pDisplay.Display, (XEvent*)&fakeEvent);
+    XPutBackEvent(fgDisplay.Display, (XEvent*)&fakeEvent);
 
     /*
      * The GLX context creation, possibly trying the direct context rendering

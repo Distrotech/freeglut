@@ -155,7 +155,7 @@ void fgHandleExtensionEvents( XEvent* base_ev )
     /* initialize the generic fields from base_ev */
     std_ev.xany = base_ev->xany;
 
-	if ( XGetEventData( fgDisplay.pDisplay.Display, cookie ) && (cookie->type == GenericEvent) && (cookie->extension == xi_opcode) ) {
+	if ( XGetEventData( fgDisplay.Display, cookie ) && (cookie->type == GenericEvent) && (cookie->extension == xi_opcode) ) {
 
 	    XIDeviceEvent* event = (XIDeviceEvent*)(cookie->data);
         XIEnterEvent *evcross;
@@ -193,7 +193,7 @@ void fgHandleExtensionEvents( XEvent* base_ev )
             std_ev.xcrossing.focus = evcross->focus;
             std_ev.xcrossing.state = BUTTON_MASK(*(unsigned int*)evcross->buttons.mask);
 
-            XPutBackEvent(fgDisplay.pDisplay.Display, &std_ev);
+            XPutBackEvent(fgDisplay.Display, &std_ev);
             break;
 
 		case XI_ButtonPress:
@@ -219,7 +219,7 @@ void fgHandleExtensionEvents( XEvent* base_ev )
             std_ev.xbutton.state = BUTTON_MASK(*(unsigned int*)event->buttons.mask);
             std_ev.xbutton.button = event->detail;
 
-			XPutBackEvent(fgDisplay.pDisplay.Display, &std_ev);
+			XPutBackEvent(fgDisplay.Display, &std_ev);
             break;
 
 		case XI_Motion:
@@ -251,7 +251,7 @@ void fgHandleExtensionEvents( XEvent* base_ev )
             std_ev.xmotion.state = BUTTON_MASK(*(unsigned int*)event->buttons.mask);
             std_ev.xmotion.is_hint = NotifyNormal;
 
-			XPutBackEvent(fgDisplay.pDisplay.Display, &std_ev);
+			XPutBackEvent(fgDisplay.Display, &std_ev);
             break;
 
 	    default:
@@ -263,7 +263,7 @@ void fgHandleExtensionEvents( XEvent* base_ev )
         }
         fgState.Modifiers = INVALID_MODIFIERS;
     }
-    XFreeEventData( fgDisplay.pDisplay.Display, cookie );
+    XFreeEventData( fgDisplay.Display, cookie );
 }
 
 #endif

@@ -168,7 +168,7 @@ void fghGetCursorPos(SFG_XYUse *mouse_pos)
     unsigned int junk_mask;
     int junk_pos;
     
-    XQueryPointer(fgDisplay.pDisplay.Display, fgDisplay.pDisplay.RootWindow,
+    XQueryPointer(fgDisplay.Display, fgDisplay.RootWindow,
             &junk_window, &junk_window,
             &mouse_pos->X, &mouse_pos->Y,
             &junk_pos, &junk_pos, &junk_mask);

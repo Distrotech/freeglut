@@ -48,7 +48,7 @@
 /* -- GLOBAL VARIABLES ----------------------------------------------------- */
 
 /*
- * A structure pointed by g_pDisplay holds all information
+ * A structure fgDisplay holds all information
  * regarding the display, screen, root window etc.
  */
 SFG_Display fgDisplay;
