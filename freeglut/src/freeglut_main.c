@@ -1672,7 +1672,7 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
         if (hwnd)   /* can be NULL if mouse outside parent by the time we get here */
         {
             temp_window = fgWindowByHandle(hwnd);
-            if (temp_window->Parent)    /* Verify we got a child window */
+            if (temp_window && temp_window->Parent)    /* Verify we got a child window */
                 child_window = temp_window;
         }
     }
