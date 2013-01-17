@@ -1033,10 +1033,11 @@ void FGAPIENTRY glutMainLoopEvent( void )
         switch( event.type )
         {
         case ClientMessage:
-            if(fgIsSpaceballXEvent(&event)) {
-                fgSpaceballHandleXEvent(&event);
-                break;
-            }
+            if (fgStructure.CurrentWindow)
+                if(fgIsSpaceballXEvent(&event)) {
+                    fgSpaceballHandleXEvent(&event);
+                    break;
+                }
             /* Destroy the window when the WM_DELETE_WINDOW message arrives */
             if( (Atom) event.xclient.data.l[ 0 ] == fgDisplay.DeleteWindow )
             {
