@@ -46,6 +46,9 @@ AC_CHECK_LIB([usbhid], [hid_init],
              [LIBUSBHID=-lusbhid], [LIBUSBHID=])
 AC_SUBST(LIBUSBHID)
 
+# check for posix clock and add -lrt
+AC_SEARCH_LIBS([clock_gettime], rt)
+
 # Checks for header files.
 AC_HEADER_STDC
 save_CPPFLAGS="$CPPFLAGS"

@@ -169,7 +169,7 @@ void fgHandleExtensionEvents( XEvent* base_ev )
         case XI_Leave:
             evcross = (XIEnterEvent*)event;
 
-			fgState.Modifiers = fgPlatformGetModifiers( evcross->mods.base );
+			fgState.Modifiers = fghGetXModifiers( evcross->mods.base );
             INVOKE_WCB( *window, MultiEntry, (
                 event->deviceid,
                 (event->evtype == XI_Enter ? GLUT_ENTERED : GLUT_LEFT)
@@ -198,7 +198,7 @@ void fgHandleExtensionEvents( XEvent* base_ev )
 
 		case XI_ButtonPress:
         case XI_ButtonRelease:
-            fgState.Modifiers = fgPlatformGetModifiers( event->mods.base );
+            fgState.Modifiers = fghGetXModifiers( event->mods.base );
             INVOKE_WCB( *window, MultiButton, (
                 event->deviceid,
                 event->event_x,
@@ -223,7 +223,7 @@ void fgHandleExtensionEvents( XEvent* base_ev )
             break;
 
 		case XI_Motion:
-            fgState.Modifiers = fgPlatformGetModifiers( event->mods.base );
+            fgState.Modifiers = fghGetXModifiers( event->mods.base );
             for (i = 0; i < event->buttons.mask_len; i++) {
                 if (event->buttons.mask[i]) {
                     button = 1;
