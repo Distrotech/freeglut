@@ -20,6 +20,10 @@ To build the "freeglut" libraries, open MSVC and load the "freeglut" workspace.
 This will load the two projects.  Selecting "Build" - "Batch Build" from the
 menu will build both the debug and the release versions of both libraries.
 
+If building with VS2012, change the platform toolset to ''Visual Studio
+2012 - Windows XP (v110_xp)'' in order to target Windows XP. Otherwise,
+the binaries would be only supported on Windows Vista upwards.
+
 The libraries will be found in the following places and will have the
 following names:
 - DLL, debug version:       freeglut\freeglut\Debug\freeglut.lib
