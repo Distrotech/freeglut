@@ -198,7 +198,8 @@ will thus not work with the currently available 2.8.1 release.
 			<li>glutWireDodecahedron, glutSolidDodecahedron</li>
 			<li>glutWireIcosahedron, glutSolidIcosahedron</li>
 			<li>glutWireRhombicDodecahedron, glutSolidRhombicDodecahedron</li>
-			<li>glutWireTeapot, glutSolidTeapot</li>
+			<li>glutWireTeapot, glutSolidTeapot, glutWireTeacup,
+            glutSolidTeacup, glutWireTeaspoon, glutSolidTeaspoon</li>
 		</ol>
 	</li>
 	<li><a href="#GameMode">Game Mode Functions</a>
@@ -496,23 +497,24 @@ from the library can be handled by the user.
 </p>
 
 <p><b>Usage</b></p>
-<p><tt>void glutInitErrorFunc   ( void (* callback)( const char *fmt, va_list ap) );</tt> <br/>
-   <tt>void glutInitWarningFunc ( void (* callback)( const char *fmt, va_list ap) );</tt> </p>
+<p><tt>void glutInitErrorFunc&nbsp;&nbsp;&nbsp;( void (* callback)( const char *fmt, va_list ap) );</tt><br/>
+<tt>void glutInitWarningFunc&nbsp;( void (* callback)( const char *fmt, va_list ap) );</tt> </p>
 
 <p><b>Description</b></p>
 <p>
 The users callback is passed a format string and a variable argument
 list that can be passed to functions such as <tt>printf</tt>.<br />
 Note that there are the preprocessor definitions
-<tt>FREEGLUT_PRINT_ERRORS</tt> and <tt>FREEGLUT_PRINT_WARNINGS</tt>. If
-defined at library (not client app!) compile time, which is default,
-warnings and errors are printed to <tt>stderr</tt>. If not defined,
-warnings and errors are muted (not printed to stderr), though errors
-still trigger deinitialization and exit. Whether
-<tt>FREEGLUT_PRINT_ERRORS</tt> and <tt>FREEGLUT_PRINT_WARNINGS</tt> is
-defined does not affect whether the client callback is called, it only
-affects whether warnings and errors are printed to <tt>stderr</tt> when
-no callback is defined.
+<tt>FREEGLUT_PRINT_ERRORS</tt> and <tt>FREEGLUT_PRINT_WARNINGS</tt>,
+which affect <i>FreeGLUT</i>'s warning and error behavior when no user
+callback is defined. If defined at library (not client app!) compile
+time--by default it is, warnings and errors are printed to
+<tt>stderr</tt>. If not defined, warnings and errors are muted (not
+printed to stderr), though errors still trigger deinitialization and
+exit. Whether <tt>FREEGLUT_PRINT_ERRORS</tt> and
+<tt>FREEGLUT_PRINT_WARNINGS</tt> is defined does not affect whether the
+client callback is called, it only affects whether warnings and errors
+are printed to <tt>stderr</tt> when no callback is defined.
 </p>
 
 <p><b>Changes From GLUT</b></p>
@@ -902,9 +904,10 @@ the specified menu.
 <p><b>Description</b></p>
 
 <p>
-Only bitmap fonts (<tt>GLUT_BITMAP_xxx</tt>) can be used as menu fonts.
-A warning is issued if the supplied font is a stroke font, or an unknown
-font and the request will be ignored.
+Only bitmap fonts (<tt>GLUT_BITMAP_xxx</tt>, see <a
+href="#FontRendering">here</a> for a list) can be used as menu fonts.  A
+warning is issued and the request is ignored if the supplied font is a
+stroke font, or an unknown font.
 </p>
 
 <p><b>Changes From GLUT</b></p>
@@ -1405,7 +1408,7 @@ is not implemented in <i>freeglut</i>.
 <p>
 The <tt>glutVisibilityFunc</tt> and the <tt>glutWindowStatusFunc</tt>
 functions set the window's visibility and windowStatus callbacks for the
-current window. Setting one supersedes the other. <i>Freeglut</i> calls
+current window. Setting one overwrites the other. <i>Freeglut</i> calls
 these callbacks when the visibility status of a window changes.
 </p>
 
@@ -1418,17 +1421,19 @@ these callbacks when the visibility status of a window changes.
 <p><b>Description</b></p>
 
 <p>
-The state callback parameter is one of GLUT_HIDDEN, GLUT_FULLY_RETAINED,
-GLUT_PARTIALLY_RETAINED, or GLUT_FULLY_COVERED depending on the current
-window status of the window. GLUT_HIDDEN means that the window is not
-shown (often meaning that the window is iconified). GLUT_FULLY_RETAINED
-means that the window is fully retained (no pixels belonging to the
-window are covered by other windows). GLUT_PARTIALLY_RETAINED means that
-the window is partially retained (some but not all pixels belonging to
-the window are covered by other windows). GLUT_FULLY_COVERED means the
-window is shown but no part of the window is visible, i.e., until the
-window's status changes, all further rendering to the window is
-discarded.<br>
+<tt>glutVisibilityFunc</tt> is deprecated and superseded by the more
+informative <tt>glutWindowStatusFunc</tt>.<br>
+For <tt>glutWindowStatusFunc</tt>, the state callback parameter is one
+of GLUT_HIDDEN, GLUT_FULLY_RETAINED, GLUT_PARTIALLY_RETAINED, or
+GLUT_FULLY_COVERED depending on the current window status of the window.
+GLUT_HIDDEN means that the window is not shown (often meaning that the
+window is iconified). GLUT_FULLY_RETAINED means that the window is fully
+retained (no pixels belonging to the window are covered by other
+windows). GLUT_PARTIALLY_RETAINED means that the window is partially
+retained (some but not all pixels belonging to the window are covered by
+other windows). GLUT_FULLY_COVERED means the window is shown but no part
+of the window is visible, i.e., until the window's status changes, all
+further rendering to the window is discarded.<br>
 GLUT considers a window visible if any pixel of the window is visible or
 any pixel of any descendant window is visible on the screen.<br>
 GLUT applications are encouraged to disable rendering and/or animation
@@ -1441,9 +1446,7 @@ status callback and re-enable the callback, you are guaranteed the next
 window status change will be reported.<br>
 Setting the window status callback for a window disables the visibility
 callback set for the window (and vice versa). The visibility callback is
-set with <tt>glutVisibilityFunc</tt>. <tt>glutVisibilityFunc</tt> is
-deprecated in favor of the more informative
-<tt>glutWindowStatusFunc</tt>. For <tt>glutVisibilityFunc</tt>, the
+set with <tt>glutVisibilityFunc</tt>, and its
 state callback parameter is either GLUT_NOT_VISIBLE or GLUT_VISIBLE
 depending on the current visibility of the window. GLUT_VISIBLE does not
 distinguish a window being totally versus partially visible.
@@ -2031,7 +2034,7 @@ draws.  The functions generate normals appropriate for lighting but,
 except for the teapot functions, do not generate texture coordinates. Do
 note that depth testing (GL_LESS) should be enabled for the correct
 drawing of the nonconvex objects, i.e., the glutTorus,
-glutSierpinskiSponge and glutTeapot.<br>
+glutSierpinskiSponge, glutTeapot, glutTeacup and glutTeaspoon.<br>
 Also see the <tt>GLUT_GEOMETRY_VISUALIZE_NORMALS</tt> option that can be
 set with <tt>glutSetOption</tt>.
 </p>
@@ -2339,46 +2342,58 @@ at which four faces meet are found at (0, 0, +/- 1) and (+/- sqrt(2)/2,
 <p>GLUT does not include these functions.
  </p>
 
-<h2>15.11  glutWireTeapot, glutSolidTeapot</h2>
+<h2>15.11 glutWireTeapot, glutSolidTeapot, glutWireTeacup,
+glutSolidTeacup, glutWireTeaspoon, glutSolidTeaspoon</h2>
 
 <p>
-The <tt>glutWireTeapot</tt> and <tt>glutSolidTeapot</tt> functions
-draw a wireframe and solid teapot respectively.
+The <tt>glutWireTeapot</tt> and <tt>glutSolidTeapot</tt> functions draw
+a wireframe and solid teapot respectively, the <tt>glutWireTeacup</tt>
+and <tt>glutSolidTeacup</tt> functions a wireframe and solid teacup, and
+the <tt>glutWireTeaspoon</tt> and <tt>glutSolidTeaspoon</tt> functions a
+wireframe and solid teaspoon.
 </p>
 
 <p><b>Definition</b></p>
 
 <p><tt>
-void glutWireTeapot (double dSize);<br>
-void glutSolidTeapot(double dSize);</tt></p>
+void glutWireTeapot&nbsp;&nbsp;&nbsp;(double dSize);<br>
+void glutSolidTeapot&nbsp;&nbsp;(double dSize);<br>
+void glutWireTeacup&nbsp;&nbsp;&nbsp;(double dSize);<br>
+void glutSolidTeacup&nbsp;&nbsp;(double dSize);<br>
+void glutWireTeaspoon&nbsp;(double dSize);<br>
+void glutSolidTeaspoon(double dSize);</tt></p>
 
 <p><b>Arguments</b></p>
-<p><tt>dSize&nbsp;&nbsp;</tt>The desired size of the teapot </p>
+<p><tt>dSize&nbsp;&nbsp;</tt>The desired size of the teapot, teacup and
+teaspoon - relative to a "standard" size</p>
 
 <p><b>Description</b></p>
 
-<p>The <tt>glutWireTeapot</tt> and <tt>
-  glutSolidTeapot</tt> functions render a teapot of the desired size,
-  centered at the origin.  This is the famous OpenGL teapot [add
-  reference]. </p>
+<p>The <tt>glutWireTeapot</tt> and <tt> glutSolidTeapot</tt> functions
+render a teapot of the desired size, centered at the origin. This is the
+famous teapot created by Martin Newell. The other functions render the
+teacup and teaspoon he used in the table scene figure in his PhD thesis.
+Vertex data retrieved from: <a
+href="ftp://ftp.funet.fi/pub/sci/graphics/packages/objects/teasetorig.gz">ftp://ftp.funet.fi/pub/sci/graphics/packages/objects/teasetorig.gz</a>.</p>
 
 <p><b>Bugs</b></p>
 <p>OpenGL's default <tt>glFrontFace</tt> state assumes that front facing
 polygons (for the purpose of face culling) have vertices that wind
-counter clockwise when projected into window space. This teapot is
-rendered with its front facing polygon vertices winding clockwise. For
-OpenGL's default back face culling to work, you should use:</p>
+counter clockwise when projected into window space. This teapot, teacup
+and teaspoon are rendered with their front facing polygon vertices
+winding clockwise. For OpenGL's default back face culling to work, you
+should use:</p>
 
 <p><tt>&nbsp;&nbsp;glFrontFace(GL_CW);<br>
 &nbsp;&nbsp;glutSolidTeapot(size);<br>
 &nbsp;&nbsp;glFrontFace(GL_CCW);</tt></p>
 
-<p>Both these bugs reflect issues in the original aux toolkit's teapot
-rendering routines (GLUT used the same teapot rendering routine).</p>
+<p>This bug reflect issues in the original teaset's vertex data
+(and is thus present in GLUT too).</p>
 
 <p><b>Changes From GLUT</b></p>
 
-<p>None that we know of. </p>
+<p>GLUT only has the teapot and misses the rest of the teaset. </p>
 
 <h1>16. <a name="GameMode"></a>Game Mode Functions</h1>
 
