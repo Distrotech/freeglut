@@ -39,7 +39,7 @@ extern void fgNewWGLCreateContext( SFG_Window* window );
 extern GLboolean fgSetupPixelFormat( SFG_Window* window, GLboolean checkOnly,
                                      unsigned char layer_type );
 
-extern void fgPlatformCheckMenuDeactivate();
+extern void fgPlatformCheckMenuDeactivate(HWND newFocusWnd);
 
 #ifdef WM_TOUCH
 typedef BOOL (WINAPI *pGetTouchInputInfo)(HTOUCHINPUT,UINT,PTOUCHINPUT,int);
@@ -61,6 +61,389 @@ GXOPENINPUT GXOpenInput_ = NULL;
 
 struct GXKeyList gxKeyList;
 #endif /* _WIN32_WCE */
+
+#ifdef _DEBUG
+/* 
+ * WM_ message to string, for debugging
+ * This is taken from the 8.0 SDK, so Windows 8 API and everything earlier is included
+ */
+struct WM_MESSAGE_MAP
+{
+    UINT    nMsg;
+    LPCSTR  lpszMsg;
+};
+#define DEFINE_MESSAGE(wm){ wm, #wm }
+static struct WM_MESSAGE_MAP allMessages[] =
+{
+    DEFINE_MESSAGE(WM_NULL),
+    DEFINE_MESSAGE(WM_CREATE),
+    DEFINE_MESSAGE(WM_DESTROY),
+    DEFINE_MESSAGE(WM_MOVE),
+    DEFINE_MESSAGE(WM_SIZE),
+
+    DEFINE_MESSAGE(WM_ACTIVATE),
+    DEFINE_MESSAGE(WM_SETFOCUS),
+    DEFINE_MESSAGE(WM_KILLFOCUS),
+    DEFINE_MESSAGE(WM_ENABLE),
+    DEFINE_MESSAGE(WM_SETREDRAW),
+    DEFINE_MESSAGE(WM_SETTEXT),
+    DEFINE_MESSAGE(WM_GETTEXT),
+    DEFINE_MESSAGE(WM_GETTEXTLENGTH),
+    DEFINE_MESSAGE(WM_PAINT),
+    DEFINE_MESSAGE(WM_CLOSE),
+#   ifndef _WIN32_WCE
+        DEFINE_MESSAGE(WM_QUERYENDSESSION),
+        DEFINE_MESSAGE(WM_QUERYOPEN),
+        DEFINE_MESSAGE(WM_ENDSESSION),
+#   endif
+    DEFINE_MESSAGE(WM_QUIT),
+    DEFINE_MESSAGE(WM_ERASEBKGND),
+    DEFINE_MESSAGE(WM_SYSCOLORCHANGE),
+    DEFINE_MESSAGE(WM_SHOWWINDOW),
+    DEFINE_MESSAGE(WM_WININICHANGE),
+
+    DEFINE_MESSAGE(WM_DEVMODECHANGE),
+    DEFINE_MESSAGE(WM_ACTIVATEAPP),
+    DEFINE_MESSAGE(WM_FONTCHANGE),
+    DEFINE_MESSAGE(WM_TIMECHANGE),
+    DEFINE_MESSAGE(WM_CANCELMODE),
+    DEFINE_MESSAGE(WM_SETCURSOR),
+    DEFINE_MESSAGE(WM_MOUSEACTIVATE),
+    DEFINE_MESSAGE(WM_CHILDACTIVATE),
+    DEFINE_MESSAGE(WM_QUEUESYNC),
+
+    DEFINE_MESSAGE(WM_GETMINMAXINFO),
+
+    DEFINE_MESSAGE(WM_PAINTICON),
+    DEFINE_MESSAGE(WM_ICONERASEBKGND),
+    DEFINE_MESSAGE(WM_NEXTDLGCTL),
+    DEFINE_MESSAGE(WM_SPOOLERSTATUS),
+    DEFINE_MESSAGE(WM_DRAWITEM),
+    DEFINE_MESSAGE(WM_MEASUREITEM),
+    DEFINE_MESSAGE(WM_DELETEITEM),
+    DEFINE_MESSAGE(WM_VKEYTOITEM),
+    DEFINE_MESSAGE(WM_CHARTOITEM),
+    DEFINE_MESSAGE(WM_SETFONT),
+    DEFINE_MESSAGE(WM_GETFONT),
+    DEFINE_MESSAGE(WM_SETHOTKEY),
+    DEFINE_MESSAGE(WM_GETHOTKEY),
+    DEFINE_MESSAGE(WM_QUERYDRAGICON),
+    DEFINE_MESSAGE(WM_COMPAREITEM),
+#   if(WINVER >= 0x0500)
+#       ifndef _WIN32_WCE
+            DEFINE_MESSAGE(WM_GETOBJECT),
+    #   endif
+#   endif /* WINVER >= 0x0500 */
+    DEFINE_MESSAGE(WM_COMPACTING),
+    DEFINE_MESSAGE(WM_COMMNOTIFY),
+    DEFINE_MESSAGE(WM_WINDOWPOSCHANGING),
+    DEFINE_MESSAGE(WM_WINDOWPOSCHANGED),
+
+    DEFINE_MESSAGE(WM_POWER),
+
+    DEFINE_MESSAGE(WM_COPYDATA),
+    DEFINE_MESSAGE(WM_CANCELJOURNAL),
+
+#   if(WINVER >= 0x0400)
+        DEFINE_MESSAGE(WM_NOTIFY),
+        DEFINE_MESSAGE(WM_INPUTLANGCHANGEREQUEST),
+        DEFINE_MESSAGE(WM_INPUTLANGCHANGE),
+        DEFINE_MESSAGE(WM_TCARD),
+        DEFINE_MESSAGE(WM_HELP),
+        DEFINE_MESSAGE(WM_USERCHANGED),
+        DEFINE_MESSAGE(WM_NOTIFYFORMAT),
+
+        DEFINE_MESSAGE(WM_CONTEXTMENU),
+        DEFINE_MESSAGE(WM_STYLECHANGING),
+        DEFINE_MESSAGE(WM_STYLECHANGED),
+        DEFINE_MESSAGE(WM_DISPLAYCHANGE),
+        DEFINE_MESSAGE(WM_GETICON),
+        DEFINE_MESSAGE(WM_SETICON),
+#   endif /* WINVER >= 0x0400 */
+
+    DEFINE_MESSAGE(WM_NCCREATE),
+    DEFINE_MESSAGE(WM_NCDESTROY),
+    DEFINE_MESSAGE(WM_NCCALCSIZE),
+    DEFINE_MESSAGE(WM_NCHITTEST),
+    DEFINE_MESSAGE(WM_NCPAINT),
+    DEFINE_MESSAGE(WM_NCACTIVATE),
+    DEFINE_MESSAGE(WM_GETDLGCODE),
+#   ifndef _WIN32_WCE
+        DEFINE_MESSAGE(WM_SYNCPAINT),
+#   endif
+    DEFINE_MESSAGE(WM_NCMOUSEMOVE),
+    DEFINE_MESSAGE(WM_NCLBUTTONDOWN),
+    DEFINE_MESSAGE(WM_NCLBUTTONUP),
+    DEFINE_MESSAGE(WM_NCLBUTTONDBLCLK),
+    DEFINE_MESSAGE(WM_NCRBUTTONDOWN),
+    DEFINE_MESSAGE(WM_NCRBUTTONUP),
+    DEFINE_MESSAGE(WM_NCRBUTTONDBLCLK),
+    DEFINE_MESSAGE(WM_NCMBUTTONDOWN),
+    DEFINE_MESSAGE(WM_NCMBUTTONUP),
+    DEFINE_MESSAGE(WM_NCMBUTTONDBLCLK),
+
+
+
+#   if(_WIN32_WINNT >= 0x0500)
+        DEFINE_MESSAGE(WM_NCXBUTTONDOWN),
+        DEFINE_MESSAGE(WM_NCXBUTTONUP),
+        DEFINE_MESSAGE(WM_NCXBUTTONDBLCLK),
+#   endif /* _WIN32_WINNT >= 0x0500 */
+
+
+#   if(_WIN32_WINNT >= 0x0501)
+        DEFINE_MESSAGE(WM_INPUT_DEVICE_CHANGE),
+#   endif /* _WIN32_WINNT >= 0x0501 */
+
+#   if(_WIN32_WINNT >= 0x0501)
+        DEFINE_MESSAGE(WM_INPUT),
+#   endif /* _WIN32_WINNT >= 0x0501 */
+
+    DEFINE_MESSAGE(WM_KEYDOWN),
+    DEFINE_MESSAGE(WM_KEYUP),
+    DEFINE_MESSAGE(WM_CHAR),
+    DEFINE_MESSAGE(WM_DEADCHAR),
+    DEFINE_MESSAGE(WM_SYSKEYDOWN),
+    DEFINE_MESSAGE(WM_SYSKEYUP),
+    DEFINE_MESSAGE(WM_SYSCHAR),
+    DEFINE_MESSAGE(WM_SYSDEADCHAR),
+#   if(_WIN32_WINNT >= 0x0501)
+        DEFINE_MESSAGE(WM_UNICHAR),
+#   endif /* _WIN32_WINNT >= 0x0501 */
+
+#   if(WINVER >= 0x0400)
+        DEFINE_MESSAGE(WM_IME_STARTCOMPOSITION),
+        DEFINE_MESSAGE(WM_IME_ENDCOMPOSITION),
+        DEFINE_MESSAGE(WM_IME_COMPOSITION),
+        DEFINE_MESSAGE(WM_IME_KEYLAST),
+#   endif /* WINVER >= 0x0400 */
+
+    DEFINE_MESSAGE(WM_INITDIALOG),
+    DEFINE_MESSAGE(WM_COMMAND),
+    DEFINE_MESSAGE(WM_SYSCOMMAND),
+    DEFINE_MESSAGE(WM_TIMER),
+    DEFINE_MESSAGE(WM_HSCROLL),
+    DEFINE_MESSAGE(WM_VSCROLL),
+    DEFINE_MESSAGE(WM_INITMENU),
+    DEFINE_MESSAGE(WM_INITMENUPOPUP),
+#   if(WINVER >= 0x0601)
+        DEFINE_MESSAGE(WM_GESTURE),
+        DEFINE_MESSAGE(WM_GESTURENOTIFY),
+#   endif /* WINVER >= 0x0601 */
+    DEFINE_MESSAGE(WM_MENUSELECT),
+    DEFINE_MESSAGE(WM_MENUCHAR),
+    DEFINE_MESSAGE(WM_ENTERIDLE),
+#   if(WINVER >= 0x0500)
+#       ifndef _WIN32_WCE
+            DEFINE_MESSAGE(WM_MENURBUTTONUP),
+            DEFINE_MESSAGE(WM_MENUDRAG),
+            DEFINE_MESSAGE(WM_MENUGETOBJECT),
+            DEFINE_MESSAGE(WM_UNINITMENUPOPUP),
+            DEFINE_MESSAGE(WM_MENUCOMMAND),
+
+#           if(_WIN32_WINNT >= 0x0500)
+                DEFINE_MESSAGE(WM_CHANGEUISTATE),
+                DEFINE_MESSAGE(WM_UPDATEUISTATE),
+                DEFINE_MESSAGE(WM_QUERYUISTATE),
+#           endif /* _WIN32_WINNT >= 0x0500 */
+
+#       endif
+#   endif /* WINVER >= 0x0500 */
+
+    DEFINE_MESSAGE(WM_CTLCOLORMSGBOX),
+    DEFINE_MESSAGE(WM_CTLCOLOREDIT),
+    DEFINE_MESSAGE(WM_CTLCOLORLISTBOX),
+    DEFINE_MESSAGE(WM_CTLCOLORBTN),
+    DEFINE_MESSAGE(WM_CTLCOLORDLG),
+    DEFINE_MESSAGE(WM_CTLCOLORSCROLLBAR),
+    DEFINE_MESSAGE(WM_CTLCOLORSTATIC),
+#   define MN_GETHMENU                     0x01E1
+
+    DEFINE_MESSAGE(WM_MOUSEMOVE),
+    DEFINE_MESSAGE(WM_LBUTTONDOWN),
+    DEFINE_MESSAGE(WM_LBUTTONUP),
+    DEFINE_MESSAGE(WM_LBUTTONDBLCLK),
+    DEFINE_MESSAGE(WM_RBUTTONDOWN),
+    DEFINE_MESSAGE(WM_RBUTTONUP),
+    DEFINE_MESSAGE(WM_RBUTTONDBLCLK),
+    DEFINE_MESSAGE(WM_MBUTTONDOWN),
+    DEFINE_MESSAGE(WM_MBUTTONUP),
+    DEFINE_MESSAGE(WM_MBUTTONDBLCLK),
+#   if (_WIN32_WINNT >= 0x0400) || (_WIN32_WINDOWS > 0x0400)
+        DEFINE_MESSAGE(WM_MOUSEWHEEL),
+#   endif
+#   if (_WIN32_WINNT >= 0x0500)
+        DEFINE_MESSAGE(WM_XBUTTONDOWN),
+        DEFINE_MESSAGE(WM_XBUTTONUP),
+        DEFINE_MESSAGE(WM_XBUTTONDBLCLK),
+#   endif
+#   if (_WIN32_WINNT >= 0x0600)
+        DEFINE_MESSAGE(WM_MOUSEHWHEEL),
+#   endif
+
+
+
+    DEFINE_MESSAGE(WM_PARENTNOTIFY),
+    DEFINE_MESSAGE(WM_ENTERMENULOOP),
+    DEFINE_MESSAGE(WM_EXITMENULOOP),
+
+#   if(WINVER >= 0x0400)
+        DEFINE_MESSAGE(WM_NEXTMENU),
+        DEFINE_MESSAGE(WM_SIZING),
+        DEFINE_MESSAGE(WM_CAPTURECHANGED),
+        DEFINE_MESSAGE(WM_MOVING),
+#   endif /* WINVER >= 0x0400 */
+
+#   if(WINVER >= 0x0400)
+        DEFINE_MESSAGE(WM_POWERBROADCAST),
+        DEFINE_MESSAGE(WM_DEVICECHANGE),
+#   endif /* WINVER >= 0x0400 */
+
+    DEFINE_MESSAGE(WM_MDICREATE),
+    DEFINE_MESSAGE(WM_MDIDESTROY),
+    DEFINE_MESSAGE(WM_MDIACTIVATE),
+    DEFINE_MESSAGE(WM_MDIRESTORE),
+    DEFINE_MESSAGE(WM_MDINEXT),
+    DEFINE_MESSAGE(WM_MDIMAXIMIZE),
+    DEFINE_MESSAGE(WM_MDITILE),
+    DEFINE_MESSAGE(WM_MDICASCADE),
+    DEFINE_MESSAGE(WM_MDIICONARRANGE),
+    DEFINE_MESSAGE(WM_MDIGETACTIVE),
+
+
+    DEFINE_MESSAGE(WM_MDISETMENU),
+    DEFINE_MESSAGE(WM_ENTERSIZEMOVE),
+    DEFINE_MESSAGE(WM_EXITSIZEMOVE),
+    DEFINE_MESSAGE(WM_DROPFILES),
+    DEFINE_MESSAGE(WM_MDIREFRESHMENU),
+
+#   if(WINVER >= 0x0602)
+        DEFINE_MESSAGE(WM_POINTERDEVICECHANGE),
+        DEFINE_MESSAGE(WM_POINTERDEVICEINRANGE),
+        DEFINE_MESSAGE(WM_POINTERDEVICEOUTOFRANGE),
+#   endif /* WINVER >= 0x0602 */
+
+#   if(WINVER >= 0x0601)
+        DEFINE_MESSAGE(WM_TOUCH),
+#   endif /* WINVER >= 0x0601 */
+
+#   if(WINVER >= 0x0602)
+        DEFINE_MESSAGE(WM_NCPOINTERUPDATE),
+        DEFINE_MESSAGE(WM_NCPOINTERDOWN),
+        DEFINE_MESSAGE(WM_NCPOINTERUP),
+        DEFINE_MESSAGE(WM_POINTERUPDATE),
+        DEFINE_MESSAGE(WM_POINTERDOWN),
+        DEFINE_MESSAGE(WM_POINTERUP),
+        DEFINE_MESSAGE(WM_POINTERENTER),
+        DEFINE_MESSAGE(WM_POINTERLEAVE),
+        DEFINE_MESSAGE(WM_POINTERACTIVATE),
+        DEFINE_MESSAGE(WM_POINTERCAPTURECHANGED),
+        DEFINE_MESSAGE(WM_TOUCHHITTESTING),
+        DEFINE_MESSAGE(WM_POINTERWHEEL),
+        DEFINE_MESSAGE(WM_POINTERHWHEEL),
+#   endif /* WINVER >= 0x0602 */
+
+
+#   if(WINVER >= 0x0400)
+        DEFINE_MESSAGE(WM_IME_SETCONTEXT),
+        DEFINE_MESSAGE(WM_IME_NOTIFY),
+        DEFINE_MESSAGE(WM_IME_CONTROL),
+        DEFINE_MESSAGE(WM_IME_COMPOSITIONFULL),
+        DEFINE_MESSAGE(WM_IME_SELECT),
+        DEFINE_MESSAGE(WM_IME_CHAR),
+#   endif /* WINVER >= 0x0400 */
+#   if(WINVER >= 0x0500)
+        DEFINE_MESSAGE(WM_IME_REQUEST),
+#   endif /* WINVER >= 0x0500 */
+#   if(WINVER >= 0x0400)
+        DEFINE_MESSAGE(WM_IME_KEYDOWN),
+        DEFINE_MESSAGE(WM_IME_KEYUP),
+#   endif /* WINVER >= 0x0400 */
+
+#   if((_WIN32_WINNT >= 0x0400) || (WINVER >= 0x0500))
+        DEFINE_MESSAGE(WM_MOUSEHOVER),
+        DEFINE_MESSAGE(WM_MOUSELEAVE),
+#   endif
+#   if(WINVER >= 0x0500)
+        DEFINE_MESSAGE(WM_NCMOUSEHOVER),
+        DEFINE_MESSAGE(WM_NCMOUSELEAVE),
+#   endif /* WINVER >= 0x0500 */
+
+#   if(_WIN32_WINNT >= 0x0501)
+        DEFINE_MESSAGE(WM_WTSSESSION_CHANGE),
+#   endif /* _WIN32_WINNT >= 0x0501 */
+
+    DEFINE_MESSAGE(WM_CUT),
+    DEFINE_MESSAGE(WM_COPY),
+    DEFINE_MESSAGE(WM_PASTE),
+    DEFINE_MESSAGE(WM_CLEAR),
+    DEFINE_MESSAGE(WM_UNDO),
+    DEFINE_MESSAGE(WM_RENDERFORMAT),
+    DEFINE_MESSAGE(WM_RENDERALLFORMATS),
+    DEFINE_MESSAGE(WM_DESTROYCLIPBOARD),
+    DEFINE_MESSAGE(WM_DRAWCLIPBOARD),
+    DEFINE_MESSAGE(WM_PAINTCLIPBOARD),
+    DEFINE_MESSAGE(WM_VSCROLLCLIPBOARD),
+    DEFINE_MESSAGE(WM_SIZECLIPBOARD),
+    DEFINE_MESSAGE(WM_ASKCBFORMATNAME),
+    DEFINE_MESSAGE(WM_CHANGECBCHAIN),
+    DEFINE_MESSAGE(WM_HSCROLLCLIPBOARD),
+    DEFINE_MESSAGE(WM_QUERYNEWPALETTE),
+    DEFINE_MESSAGE(WM_PALETTEISCHANGING),
+    DEFINE_MESSAGE(WM_PALETTECHANGED),
+    DEFINE_MESSAGE(WM_HOTKEY),
+
+#   if(WINVER >= 0x0400)
+        DEFINE_MESSAGE(WM_PRINT),
+        DEFINE_MESSAGE(WM_PRINTCLIENT),
+#   endif /* WINVER >= 0x0400 */
+
+#   if(_WIN32_WINNT >= 0x0500)
+        DEFINE_MESSAGE(WM_APPCOMMAND),
+#   endif /* _WIN32_WINNT >= 0x0500 */
+
+#   if(_WIN32_WINNT >= 0x0501)
+        DEFINE_MESSAGE(WM_THEMECHANGED),
+#   endif /* _WIN32_WINNT >= 0x0501 */
+
+
+#   if(_WIN32_WINNT >= 0x0501)
+        DEFINE_MESSAGE(WM_CLIPBOARDUPDATE),
+#   endif /* _WIN32_WINNT >= 0x0501 */
+
+#   if(_WIN32_WINNT >= 0x0600)
+        DEFINE_MESSAGE(WM_DWMCOMPOSITIONCHANGED),
+        DEFINE_MESSAGE(WM_DWMNCRENDERINGCHANGED),
+        DEFINE_MESSAGE(WM_DWMCOLORIZATIONCOLORCHANGED),
+        DEFINE_MESSAGE(WM_DWMWINDOWMAXIMIZEDCHANGE),
+#   endif /* _WIN32_WINNT >= 0x0600 */
+
+#   if(_WIN32_WINNT >= 0x0601)
+        DEFINE_MESSAGE(WM_DWMSENDICONICTHUMBNAIL),
+        DEFINE_MESSAGE(WM_DWMSENDICONICLIVEPREVIEWBITMAP),
+#   endif /* _WIN32_WINNT >= 0x0601 */
+
+
+#   if(WINVER >= 0x0600)
+        DEFINE_MESSAGE(WM_GETTITLEBARINFOEX),
+#   endif /* WINVER >= 0x0600 */
+    { 0, NULL, }    /* end of message list */
+};
+#undef DEFINE_MESSAGE
+
+char* WMMsg2Str(DWORD dwMessage)
+{
+    struct WM_MESSAGE_MAP* pMapMsg = allMessages;
+    for (/*null*/; pMapMsg->lpszMsg != NULL; pMapMsg++)
+    {
+        if (pMapMsg->nMsg == dwMessage )
+        {
+            return (char *)pMapMsg->lpszMsg;
+        }
+    }
+    return "";
+}
+#endif /* _DEBUG */
 
 
 /* Get system time, taking special precautions against 32bit timer wrap.
@@ -195,6 +578,18 @@ static int fgPlatformGetModifiers (void)
             ( GetKeyState( VK_RMENU    ) < 0 )) ? GLUT_ACTIVE_ALT   : 0 );
 }
 
+/* Check whether a button (VK_*BUTTON) is currently depressed. Returns
+ * non-zero (not necessarily 1) if yes. */
+static SHORT fgGetAsyncKeyState(int vKey)
+{
+    /* MSDN says: "If the most significant bit is set, the key is down, and if
+     * the least significant bit is set, the key was pressed after the previous
+     * call to GetAsyncKeyState." This behavior cannot be relied upon however.
+     * Remove this bit so that we can simply test with ! if key is up.
+     */
+    return GetAsyncKeyState(vKey) & ~1;
+}
+
 static LRESULT fghWindowProcKeyPress(SFG_Window *window, UINT uMsg, GLboolean keydown, WPARAM wParam, LPARAM lParam)
 {
     static unsigned char lControl = 0, lShift = 0, lAlt = 0,
@@ -246,12 +641,12 @@ static LRESULT fghWindowProcKeyPress(SFG_Window *window, UINT uMsg, GLboolean ke
      * so when we get an alt, shift or control keypress here, we manually check whether it was the left or the right
      */
 #define ASYNC_KEY_EVENT(winKey,glutKey,keyStateVar)\
-    if (!keyStateVar && GetAsyncKeyState ( winKey ))\
+    if (!keyStateVar && fgGetAsyncKeyState ( winKey ))\
     {\
         keypress   = glutKey;\
         keyStateVar = 1;\
     }\
-    else if (keyStateVar && !GetAsyncKeyState ( winKey ))\
+    else if (keyStateVar && !fgGetAsyncKeyState ( winKey ))\
     {\
         keypress   = glutKey;\
         keyStateVar = 0;\
@@ -395,8 +790,8 @@ LRESULT CALLBACK fgPlatformWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
     if ( ( window == NULL ) && ( uMsg != WM_CREATE ) )
       return DefWindowProc( hWnd, uMsg, wParam, lParam );
 
-    /* printf ( "Window %3d message <%04x> %12d %12d\n", window?window->ID:0,
-             uMsg, wParam, lParam ); */
+    /* printf ( "Window %3d message %s (<%04x>) %12d %12d\n", window?window->ID:0,
+             WMMsg2Str(uMsg), uMsg, wParam, lParam ); */
 
     switch( uMsg )
     {
@@ -510,9 +905,9 @@ LRESULT CALLBACK fgPlatformWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
              * force redisplay so display keeps running during dragging.
              * Screen still wont update when not moving the cursor though...
              */
-            /* PRECT prect = (PRECT) lParam; */
             RECT rect;
-            /* printf("WM_SIZING: nc-area: %i,%i\n",prect->right-prect->left,prect->bottom-prect->top); */
+            /* PRECT prect = (PRECT) lParam;
+               printf("WM_SIZING: nc-area: %i,%i\n",prect->right-prect->left,prect->bottom-prect->top); */
             /* Get client area, the rect in lParam is including non-client area. */
             fghGetClientArea(&rect,window,FALSE);
 
@@ -586,12 +981,37 @@ LRESULT CALLBACK fgPlatformWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
         lRet = DefWindowProc( hWnd, uMsg, wParam, lParam );
 
         /* Check if there are any open menus that need to be closed */
-        fgPlatformCheckMenuDeactivate();
+        fgPlatformCheckMenuDeactivate((HWND)wParam);
+        break;
+
+    case WM_MOUSEACTIVATE:
+        /* Clicks should not activate the menu.
+         * Especially important when clicking on a menu's submenu item which has no effect.
+         */
+        /*printf("WM_MOUSEACTIVATE\n");*/
+        if (window->IsMenu)
+            lRet = MA_NOACTIVATEANDEAT;
+        else
+            lRet = DefWindowProc( hWnd, uMsg, wParam, lParam );
+        break;
+
+    case WM_NCLBUTTONDOWN:
+    case WM_NCMBUTTONDOWN:
+    case WM_NCRBUTTONDOWN:
+        {
+            SFG_Menu *menu;
+            if (fgState.ActiveMenus && (menu = fgGetActiveMenu()))
+                /* user clicked non-client area of window while a menu is open. Close menu */
+                fgDeactivateMenu(menu->ParentWindow);
+
+            /* and always pass to DefWindowProc */
+            lRet = DefWindowProc( hWnd, uMsg, wParam, lParam );
+        }
         break;
 
 #if 0
     case WM_ACTIVATE:
-        //printf("WM_ACTIVATE: %x (ID: %i) %d %d\n",lParam, window->ID, HIWORD(wParam), LOWORD(wParam));
+        /* printf("WM_ACTIVATE: %x (ID: %i) %d %d\n",lParam, window->ID, HIWORD(wParam), LOWORD(wParam)); */
         if (LOWORD(wParam) != WA_INACTIVE)
         {
 /*            printf("WM_ACTIVATE: fgSetCursor( %p, %d)\n", window,
@@ -629,7 +1049,7 @@ LRESULT CALLBACK fgPlatformWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
                     tme.hwndTrack = window->Window.Handle;
                     TrackMouseEvent(&tme);
 
-                    window->State.pWState.MouseTracking = GL_TRUE;
+                    window->State.pWState.MouseTracking = TRUE;
                 }
             }
         }
@@ -648,7 +1068,7 @@ LRESULT CALLBACK fgPlatformWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
             INVOKE_WCB( *window, Entry, ( GLUT_LEFT ) );
             fgSetWindow(saved_window);
 
-            window->State.pWState.MouseTracking = GL_FALSE;
+            window->State.pWState.MouseTracking = FALSE;
             lRet = 0;   /* As per docs, must return zero */
         }
         break;
@@ -658,12 +1078,12 @@ LRESULT CALLBACK fgPlatformWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
         if (wParam)
         {
             fghPlatformOnWindowStatusNotify(window, GL_TRUE, GL_FALSE);
-            window->State.Redisplay = GL_TRUE;
+            window->State.WorkMask |= GLUT_DISPLAY_WORK;
         }
         else
         {
             fghPlatformOnWindowStatusNotify(window, GL_FALSE, GL_FALSE);
-            window->State.Redisplay = GL_FALSE;
+            window->State.WorkMask &= ~GLUT_DISPLAY_WORK;
         }
         break;
 
@@ -684,7 +1104,7 @@ LRESULT CALLBACK fgPlatformWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
             BeginPaint( hWnd, &ps );
             EndPaint( hWnd, &ps );
 
-            window->State.Redisplay = GL_TRUE;
+            window->State.WorkMask |= GLUT_DISPLAY_WORK;
         }
         lRet = 0;   /* As per docs, should return 0 */
     }
@@ -829,7 +1249,7 @@ LRESULT CALLBACK fgPlatformWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
                 SetCapture ( window->Window.Handle ) ;
             setCaptureActive = 1; /* Set to false in WM_CAPTURECHANGED handler */
         }
-        else if (!GetAsyncKeyState(VK_LBUTTON) && !GetAsyncKeyState(VK_MBUTTON) && !GetAsyncKeyState(VK_RBUTTON))
+        else if (!fgGetAsyncKeyState(VK_LBUTTON) && !fgGetAsyncKeyState(VK_MBUTTON) && !fgGetAsyncKeyState(VK_RBUTTON))
           /* Make sure all mouse buttons are released before releasing capture */
           ReleaseCapture () ;
 
@@ -976,7 +1396,7 @@ LRESULT CALLBACK fgPlatformWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 #if !defined(_WIN32_WCE)
     case WM_SYNCPAINT:  /* 0x0088 */
         /* Another window has moved, need to update this one */
-        window->State.Redisplay = GL_TRUE;
+        window->State.WorkMask |= GLUT_DISPLAY_WORK;
         lRet = DefWindowProc( hWnd, uMsg, wParam, lParam );
         /* Help screen says this message must be passed to "DefWindowProc" */
         break;
@@ -1133,239 +1553,218 @@ LRESULT CALLBACK fgPlatformWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 }
 
 
-/* Step through the work list */
-void fgPlatformProcessWork(SFG_Window *window)
+/* deal with work list items */
+void fgPlatformInitWork(SFG_Window* window)
 {
-    unsigned int workMask = window->State.WorkMask;
-    /* Now clear it so that any callback generated by the actions below can set work again */
-    window->State.WorkMask = 0;
+    RECT windowRect;
 
-    /* This is before the first display callback: call a few callbacks to inform user of window size, position, etc
-     * we know this is before the first display callback of a window as for all windows GLUT_INIT_WORK is set when
-     * they are opened, and work is done before displaying in the mainloop.
-     */
-    if (workMask & GLUT_INIT_WORK)
-    {
-        RECT windowRect;
+    /* Notify windowStatus/visibility */
+    fghPlatformOnWindowStatusNotify(window, window->State.Visible, GL_TRUE);
 
-        /* Notify windowStatus/visibility */
-        fghPlatformOnWindowStatusNotify(window, window->State.Visible, GL_TRUE);
+    /* get and notify window's position */
+    GetWindowRect(window->Window.Handle,&windowRect);
+    fghOnPositionNotify(window, windowRect.left, windowRect.top, GL_TRUE);
 
-        /* get and notify window's position */
-        GetWindowRect(window->Window.Handle,&windowRect);
-        fghOnPositionNotify(window, windowRect.left, windowRect.top, GL_TRUE);
+    /* get and notify window's size */
+    GetClientRect(window->Window.Handle,&windowRect);
+    fghOnReshapeNotify(window, windowRect.right-windowRect.left, windowRect.bottom-windowRect.top, GL_TRUE);
+}
 
-        /* get and notify window's size */
-        GetClientRect(window->Window.Handle,&windowRect);
-        fghOnReshapeNotify(window, windowRect.right-windowRect.left, windowRect.bottom-windowRect.top, GL_TRUE);
-
-        /* Call init context callback */
-        INVOKE_WCB( *window, InitContext, ());
-
-        /* Lastly, check if we have a display callback, error out if not
-         * This is the right place to do it, as the redisplay will be
-         * next right after we exit this function, so there is no more
-         * opportunity for the user to register a callback for this window.
-         */
-        if (!FETCH_WCB(*window, Display))
-            fgError ( "ERROR:  No display callback registered for window %d\n", window->ID );
-    }
-
-    /* On windows we can position, resize and change z order at the same time */
-    if (workMask & (GLUT_POSITION_WORK|GLUT_SIZE_WORK|GLUT_ZORDER_WORK|GLUT_FULL_SCREEN_WORK))
-    {
-        UINT flags = SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING | SWP_NOSIZE | SWP_NOZORDER;
-        HWND insertAfter = HWND_TOP;
-        RECT clientRect;
+/* On windows we can position, resize and change z order at the same time */
+void fgPlatformPosResZordWork(SFG_Window* window, unsigned int workMask)
+{
+    UINT flags = SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING | SWP_NOSIZE | SWP_NOZORDER;
+    HWND insertAfter = HWND_TOP;
+    RECT clientRect;
 
 #if !defined(_WIN32_WCE) /* FIXME: what about WinCE */
-        if (workMask & GLUT_FULL_SCREEN_WORK)
+    if (workMask & GLUT_FULL_SCREEN_WORK)
+    {
+        /* This asks us to toggle fullscreen mode */
+        flags |= SWP_FRAMECHANGED;
+
+        if (window->State.IsFullscreen)
         {
-            /* This asks us to toggle fullscreen mode */
-            flags |= SWP_FRAMECHANGED;
+            /* If we are fullscreen, resize the current window back to its original size */
+            /* printf("OldRect %i,%i to %i,%i\n",window->State.pWState.OldRect.left,window->State.pWState.OldRect.top,window->State.pWState.OldRect.right,window->State.pWState.OldRect.bottom); */
 
-            if (window->State.IsFullscreen)
+            /* restore style of window before making it fullscreen */
+            SetWindowLong(window->Window.Handle, GWL_STYLE, window->State.pWState.OldStyle);
+            SetWindowLong(window->Window.Handle, GWL_EXSTYLE, window->State.pWState.OldStyleEx);
+
+            /* Then set up resize/reposition, unless user already queued up reshape/position work */
+            if (!(workMask & GLUT_POSITION_WORK))
             {
-                /* If we are fullscreen, resize the current window back to its original size */
-                /* printf("OldRect %i,%i to %i,%i\n",window->State.pWState.OldRect.left,window->State.pWState.OldRect.top,window->State.pWState.OldRect.right,window->State.pWState.OldRect.bottom); */
-
-                /* restore style of window before making it fullscreen */
-                SetWindowLong(window->Window.Handle, GWL_STYLE, window->State.pWState.OldStyle);
-                SetWindowLong(window->Window.Handle, GWL_EXSTYLE, window->State.pWState.OldStyleEx);
-
-                /* Then set up resize/reposition, unless user already queued up reshape/position work */
-                if (!(workMask & GLUT_POSITION_WORK))
-                {
-                    workMask |= GLUT_POSITION_WORK;
-                    window->State.DesiredXpos   = window->State.pWState.OldRect.left;
-                    window->State.DesiredYpos   = window->State.pWState.OldRect.top;
-                }
-                if (!(workMask & GLUT_SIZE_WORK))
-                {
-                    workMask |= GLUT_SIZE_WORK;
-                    window->State.DesiredWidth  = window->State.pWState.OldRect.right  - window->State.pWState.OldRect.left;
-                    window->State.DesiredHeight = window->State.pWState.OldRect.bottom - window->State.pWState.OldRect.top;
-                }
+                workMask |= GLUT_POSITION_WORK;
+                window->State.DesiredXpos   = window->State.pWState.OldRect.left;
+                window->State.DesiredYpos   = window->State.pWState.OldRect.top;
+            }
+            if (!(workMask & GLUT_SIZE_WORK))
+            {
+                workMask |= GLUT_SIZE_WORK;
+                window->State.DesiredWidth  = window->State.pWState.OldRect.right  - window->State.pWState.OldRect.left;
+                window->State.DesiredHeight = window->State.pWState.OldRect.bottom - window->State.pWState.OldRect.top;
+            }
                 
-                /* We'll finish off the fullscreen operation below after the other GLUT_POSITION_WORK|GLUT_SIZE_WORK|GLUT_ZORDER_WORK */
-            }
-            else
-            {
-                /* we are currently not fullscreen, go to fullscreen:
-                 * remove window decoration and then maximize
-                 */
-                RECT rect;
-                HMONITOR hMonitor;
-                MONITORINFO mi;
-        
-                /* save current window rect, style, exstyle and maximized state */
-                window->State.pWState.OldMaximized = !!IsZoomed(window->Window.Handle);
-                if (window->State.pWState.OldMaximized)
-                    /* We force the window into restored mode before going
-                     * fullscreen because Windows doesn't seem to hide the
-                     * taskbar if the window is in the maximized state.
-                     */
-                    SendMessage(window->Window.Handle, WM_SYSCOMMAND, SC_RESTORE, 0);
-
-                fghGetClientArea( &window->State.pWState.OldRect, window, GL_TRUE );
-                window->State.pWState.OldStyle   = GetWindowLong(window->Window.Handle, GWL_STYLE);
-                window->State.pWState.OldStyleEx = GetWindowLong(window->Window.Handle, GWL_EXSTYLE);
-
-                /* remove decorations from style */
-                SetWindowLong(window->Window.Handle, GWL_STYLE,
-                              window->State.pWState.OldStyle & ~(WS_CAPTION | WS_THICKFRAME));
-                SetWindowLong(window->Window.Handle, GWL_EXSTYLE,
-                              window->State.pWState.OldStyleEx & ~(WS_EX_DLGMODALFRAME |
-                              WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
-
-                /* For fullscreen mode, find the monitor that is covered the most
-                 * by the window and get its rect as the resize target.
-	             */
-                GetWindowRect(window->Window.Handle, &rect);
-                hMonitor= MonitorFromRect(&rect, MONITOR_DEFAULTTONEAREST);
-                mi.cbSize = sizeof(mi);
-                GetMonitorInfo(hMonitor, &mi);
-                rect = mi.rcMonitor;
-
-                /* then setup window resize, overwriting other work queued on the window */
-                window->State.WorkMask |= GLUT_POSITION_WORK | GLUT_SIZE_WORK;
-                window->State.WorkMask &= ~GLUT_ZORDER_WORK;
-                window->State.DesiredXpos   = rect.left;
-                window->State.DesiredYpos   = rect.top;
-                window->State.DesiredWidth  = rect.right  - rect.left;
-                window->State.DesiredHeight = rect.bottom - rect.top;
-            }
+            /* We'll finish off the fullscreen operation below after the other GLUT_POSITION_WORK|GLUT_SIZE_WORK|GLUT_ZORDER_WORK */
         }
+        else
+        {
+            /* we are currently not fullscreen, go to fullscreen:
+                * remove window decoration and then maximize
+                */
+            RECT rect;
+            HMONITOR hMonitor;
+            MONITORINFO mi;
+        
+            /* save current window rect, style, exstyle and maximized state */
+            window->State.pWState.OldMaximized = !!IsZoomed(window->Window.Handle);
+            if (window->State.pWState.OldMaximized)
+                /* We force the window into restored mode before going
+                    * fullscreen because Windows doesn't seem to hide the
+                    * taskbar if the window is in the maximized state.
+                    */
+                SendMessage(window->Window.Handle, WM_SYSCOMMAND, SC_RESTORE, 0);
+
+            fghGetClientArea( &window->State.pWState.OldRect, window, GL_TRUE );
+            window->State.pWState.OldStyle   = GetWindowLong(window->Window.Handle, GWL_STYLE);
+            window->State.pWState.OldStyleEx = GetWindowLong(window->Window.Handle, GWL_EXSTYLE);
+
+            /* remove decorations from style */
+            SetWindowLong(window->Window.Handle, GWL_STYLE,
+                            window->State.pWState.OldStyle & ~(WS_CAPTION | WS_THICKFRAME));
+            SetWindowLong(window->Window.Handle, GWL_EXSTYLE,
+                            window->State.pWState.OldStyleEx & ~(WS_EX_DLGMODALFRAME |
+                            WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
+
+            /* For fullscreen mode, find the monitor that is covered the most
+                * by the window and get its rect as the resize target.
+	            */
+            GetWindowRect(window->Window.Handle, &rect);
+            hMonitor= MonitorFromRect(&rect, MONITOR_DEFAULTTONEAREST);
+            mi.cbSize = sizeof(mi);
+            GetMonitorInfo(hMonitor, &mi);
+            rect = mi.rcMonitor;
+
+            /* then setup window resize, overwriting other work queued on the window */
+            window->State.WorkMask |= GLUT_POSITION_WORK | GLUT_SIZE_WORK;
+            window->State.WorkMask &= ~GLUT_ZORDER_WORK;
+            window->State.DesiredXpos   = rect.left;
+            window->State.DesiredYpos   = rect.top;
+            window->State.DesiredWidth  = rect.right  - rect.left;
+            window->State.DesiredHeight = rect.bottom - rect.top;
+        }
+    }
 #endif /*!defined(_WIN32_WCE) */
 
-        /* Now deal with normal position, reshape and z order requests (some might have been set when handling GLUT_FULLSCREEN_WORK above */
-        {
-            /* get rect describing window's current position and size, 
-             * in screen coordinates and in FreeGLUT format
-             * (size (right-left, bottom-top) is client area size, top and left
-             * are outside of window including decorations).
-             */
-            fghGetClientArea( &clientRect, window, TRUE );
-
-            if (workMask & GLUT_POSITION_WORK)
-            {
-                flags &= ~SWP_NOMOVE;
-                
-                /* Move rect so that top-left is at requested position */
-                /* This also automatically makes sure that child window requested coordinates are relative
-                 * to top-left of parent's client area (needed input for SetWindowPos on child windows),
-                 * so no need to further correct rect for child windows below (childs don't have decorations either).
-                 */
-                OffsetRect(&clientRect,window->State.DesiredXpos-clientRect.left,window->State.DesiredYpos-clientRect.top);
-            }
-            if (workMask & GLUT_SIZE_WORK)
-            {
-                flags &= ~SWP_NOSIZE;
-                
-                /* Note on maximizing behavior of Windows: the resize borders are off
-                 * the screen such that the client area extends all the way from the
-                 * leftmost corner to the rightmost corner to maximize screen real
-                 * estate. A caption is still shown however to allow interaction with
-                 * the window controls. This is default behavior of Windows that
-                 * FreeGLUT sticks with. To alter, one would have to check if
-                 * WS_MAXIMIZE style is set when a resize event is triggered, and
-                 * then manually correct the windowRect to put the borders back on
-                 * screen.
-                 */
-
-                /* Set new size of window, WxH specify client area */
-                clientRect.right    = clientRect.left + window->State.DesiredWidth;
-                clientRect.bottom   = clientRect.top  + window->State.DesiredHeight;
-            }
-            if (workMask & GLUT_ZORDER_WORK)
-            {
-                flags &= ~SWP_NOZORDER;
-
-                /* Could change this to push it down or up one window at a time with some
-                 * more code using GetWindow with GW_HWNDPREV and GW_HWNDNEXT.
-                 * What would be consistent with X11? Win32 GLUT does what we do here...
-                 */
-                if (window->State.DesiredZOrder < 0)
-                    insertAfter = HWND_BOTTOM;
-            }
-        }
-
-        /* Adjust for window decorations
-         * Child windows don't have decoration, so no need to correct
-         */
-        if (!window->Parent)
-            /* get the window rect from this to feed to SetWindowPos, correct for window decorations */
-            fghComputeWindowRectFromClientArea_QueryWindow(&clientRect,window,TRUE);
-    
-        /* Do the requested positioning, moving, and z order push/pop. */
-        SetWindowPos( window->Window.Handle,
-                      insertAfter,
-                      clientRect.left, clientRect.top,
-                      clientRect.right - clientRect.left,
-                      clientRect.bottom- clientRect.top,
-                      flags
-        );
-
-        /* Finish off the fullscreen operation we were doing, if any */
-        if (workMask & GLUT_FULL_SCREEN_WORK)
-        {
-            if (window->State.IsFullscreen)
-            {
-                /* leaving fullscreen, restore maximized state, if any */
-                if (window->State.pWState.OldMaximized)
-                    SendMessage(window->Window.Handle, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
-
-                window->State.IsFullscreen = GL_FALSE;
-            }
-            else
-                window->State.IsFullscreen = GL_TRUE;
-        }
-    }
-
-    if (workMask & GLUT_VISIBILITY_WORK)
+    /* Now deal with normal position, reshape and z order requests (some might have been set when handling GLUT_FULLSCREEN_WORK above */
     {
-        /* Visibility status of window gets updated in the WM_SHOWWINDOW and WM_SIZE handlers */
-        int cmdShow = 0;
-        SFG_Window *win = window;
-        switch (window->State.DesiredVisibility)
-        {
-        case DesireHiddenState:
-            cmdShow = SW_HIDE;
-            break;
-        case DesireIconicState:
-            cmdShow = SW_MINIMIZE;
-            /* Call on top-level window */
-            while (win->Parent)
-                win = win->Parent;
-            break;
-        case DesireNormalState:
-            if (win->IsMenu)
-                cmdShow = SW_SHOWNOACTIVATE;    /* Just show, don't activate if its a menu */
-            else
-                cmdShow = SW_SHOW;
-            break;
-        }
+        /* get rect describing window's current position and size, 
+            * in screen coordinates and in FreeGLUT format
+            * (size (right-left, bottom-top) is client area size, top and left
+            * are outside of window including decorations).
+            */
+        fghGetClientArea( &clientRect, window, TRUE );
 
-        ShowWindow( win->Window.Handle, cmdShow );
+        if (workMask & GLUT_POSITION_WORK)
+        {
+            flags &= ~SWP_NOMOVE;
+                
+            /* Move rect so that top-left is at requested position */
+            /* This also automatically makes sure that child window requested coordinates are relative
+                * to top-left of parent's client area (needed input for SetWindowPos on child windows),
+                * so no need to further correct rect for child windows below (childs don't have decorations either).
+                */
+            OffsetRect(&clientRect,window->State.DesiredXpos-clientRect.left,window->State.DesiredYpos-clientRect.top);
+        }
+        if (workMask & GLUT_SIZE_WORK)
+        {
+            flags &= ~SWP_NOSIZE;
+                
+            /* Note on maximizing behavior of Windows: the resize borders are off
+                * the screen such that the client area extends all the way from the
+                * leftmost corner to the rightmost corner to maximize screen real
+                * estate. A caption is still shown however to allow interaction with
+                * the window controls. This is default behavior of Windows that
+                * FreeGLUT sticks with. To alter, one would have to check if
+                * WS_MAXIMIZE style is set when a resize event is triggered, and
+                * then manually correct the windowRect to put the borders back on
+                * screen.
+                */
+
+            /* Set new size of window, WxH specify client area */
+            clientRect.right    = clientRect.left + window->State.DesiredWidth;
+            clientRect.bottom   = clientRect.top  + window->State.DesiredHeight;
+        }
+        if (workMask & GLUT_ZORDER_WORK)
+        {
+            flags &= ~SWP_NOZORDER;
+
+            /* Could change this to push it down or up one window at a time with some
+                * more code using GetWindow with GW_HWNDPREV and GW_HWNDNEXT.
+                * What would be consistent with X11? Win32 GLUT does what we do here...
+                */
+            if (window->State.DesiredZOrder < 0)
+                insertAfter = HWND_BOTTOM;
+        }
     }
+
+    /* Adjust for window decorations
+        * Child windows don't have decoration, so no need to correct
+        */
+    if (!window->Parent)
+        /* get the window rect from this to feed to SetWindowPos, correct for window decorations */
+        fghComputeWindowRectFromClientArea_QueryWindow(&clientRect,window,TRUE);
+    
+    /* Do the requested positioning, moving, and z order push/pop. */
+    SetWindowPos( window->Window.Handle,
+                    insertAfter,
+                    clientRect.left, clientRect.top,
+                    clientRect.right - clientRect.left,
+                    clientRect.bottom- clientRect.top,
+                    flags
+    );
+
+    /* Finish off the fullscreen operation we were doing, if any */
+    if (workMask & GLUT_FULL_SCREEN_WORK)
+    {
+        if (window->State.IsFullscreen)
+        {
+            /* leaving fullscreen, restore maximized state, if any */
+            if (window->State.pWState.OldMaximized)
+                SendMessage(window->Window.Handle, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+
+            window->State.IsFullscreen = GL_FALSE;
+        }
+        else
+            window->State.IsFullscreen = GL_TRUE;
+    }
+}
+
+
+void fgPlatformVisibilityWork(SFG_Window* window)
+{
+    /* Visibility status of window gets updated in the WM_SHOWWINDOW and WM_SIZE handlers */
+    int cmdShow = 0;
+    SFG_Window *win = window;
+    switch (window->State.DesiredVisibility)
+    {
+    case DesireHiddenState:
+        cmdShow = SW_HIDE;
+        break;
+    case DesireIconicState:
+        cmdShow = SW_MINIMIZE;
+        /* Call on top-level window */
+        while (win->Parent)
+            win = win->Parent;
+        break;
+    case DesireNormalState:
+        if (win->IsMenu && (!fgStructure.GameModeWindow || win->ActiveMenu->ParentWindow != fgStructure.GameModeWindow))
+            cmdShow = SW_SHOWNA;    /* Just show, don't activate window if its a menu. Only exception is when the parent is a gamemode window as the menu would pop under it when we do this... */
+        else
+            cmdShow = SW_SHOW;
+        break;
+    }
+
+    ShowWindow( win->Window.Handle, cmdShow );
 }
